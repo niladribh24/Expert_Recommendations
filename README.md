@@ -215,7 +215,3 @@ python -m pytest tests/test_api.py -v
 - ✅ Works offline for seasonal/price advisories
 
 ---
-
-## 📄 License
-
-Academic project for demonstration purposes.
