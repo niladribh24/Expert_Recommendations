@@ -1,0 +1,154 @@
+{
+    "kharif": {
+        "name": "Kharif (Monsoon)",
+        "name_hi": "खरीफ (मानसून)",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "planting_period": "June - July",
+        "harvesting_period": "September - October",
+        "crops": [
+            {
+                "name": "Rice",
+                "name_hi": "धान",
+                "water_requirement": "high"
+            },
+            {
+                "name": "Maize",
+                "name_hi": "मक्का",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Cotton",
+                "name_hi": "कपास",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Soybean",
+                "name_hi": "सोयाबीन",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Groundnut",
+                "name_hi": "मूंगफली",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Sugarcane",
+                "name_hi": "गन्ना",
+                "water_requirement": "high"
+            },
+            {
+                "name": "Jowar",
+                "name_hi": "ज्वार",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Bajra",
+                "name_hi": "बाजरा",
+                "water_requirement": "low"
+            }
+        ]
+    },
+    "rabi": {
+        "name": "Rabi (Winter)",
+        "name_hi": "रबी (सर्दी)",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "planting_period": "October - December",
+        "harvesting_period": "March - April",
+        "crops": [
+            {
+                "name": "Wheat",
+                "name_hi": "गेहूं",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Barley",
+                "name_hi": "जौ",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Mustard",
+                "name_hi": "सरसों",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Gram (Chickpea)",
+                "name_hi": "चना",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Peas",
+                "name_hi": "मटर",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Lentil",
+                "name_hi": "मसूर",
+                "water_requirement": "low"
+            },
+            {
+                "name": "Potato",
+                "name_hi": "आलू",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Onion",
+                "name_hi": "प्याज",
+                "water_requirement": "medium"
+            }
+        ]
+    },
+    "zaid": {
+        "name": "Zaid (Summer)",
+        "name_hi": "जायद (गर्मी)",
+        "months": [
+            4,
+            5
+        ],
+        "planting_period": "March - April",
+        "harvesting_period": "May - June",
+        "crops": [
+            {
+                "name": "Watermelon",
+                "name_hi": "तरबूज",
+                "water_requirement": "high"
+            },
+            {
+                "name": "Muskmelon",
+                "name_hi": "खरबूजा",
+                "water_requirement": "high"
+            },
+            {
+                "name": "Cucumber",
+                "name_hi": "खीरा",
+                "water_requirement": "high"
+            },
+            {
+                "name": "Bitter Gourd",
+                "name_hi": "करेला",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Pumpkin",
+                "name_hi": "कद्दू",
+                "water_requirement": "medium"
+            },
+            {
+                "name": "Moong Dal",
+                "name_hi": "मूंग दाल",
+                "water_requirement": "low"
+            }
+        ]
+    }
+}

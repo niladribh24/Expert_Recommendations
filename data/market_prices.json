@@ -1,0 +1,90 @@
+{
+    "last_updated": "2026-01-15",
+    "market": "Agmarknet Sample Data",
+    "prices": {
+        "Rice": {
+            "name_hi": "धान",
+            "unit": "quintal",
+            "current_week": 2150,
+            "previous_week": 2100,
+            "msp": 2183
+        },
+        "Wheat": {
+            "name_hi": "गेहूं",
+            "unit": "quintal",
+            "current_week": 2275,
+            "previous_week": 2250,
+            "msp": 2275
+        },
+        "Maize": {
+            "name_hi": "मक्का",
+            "unit": "quintal",
+            "current_week": 1962,
+            "previous_week": 1980,
+            "msp": 1962
+        },
+        "Cotton": {
+            "name_hi": "कपास",
+            "unit": "quintal",
+            "current_week": 6620,
+            "previous_week": 6500,
+            "msp": 6620
+        },
+        "Soybean": {
+            "name_hi": "सोयाबीन",
+            "unit": "quintal",
+            "current_week": 4600,
+            "previous_week": 4550,
+            "msp": 4600
+        },
+        "Groundnut": {
+            "name_hi": "मूंगफली",
+            "unit": "quintal",
+            "current_week": 5850,
+            "previous_week": 5800,
+            "msp": 5850
+        },
+        "Mustard": {
+            "name_hi": "सरसों",
+            "unit": "quintal",
+            "current_week": 5450,
+            "previous_week": 5400,
+            "msp": 5450
+        },
+        "Gram": {
+            "name_hi": "चना",
+            "unit": "quintal",
+            "current_week": 5440,
+            "previous_week": 5500,
+            "msp": 5440
+        },
+        "Potato": {
+            "name_hi": "आलू",
+            "unit": "quintal",
+            "current_week": 1200,
+            "previous_week": 1150,
+            "msp": null
+        },
+        "Onion": {
+            "name_hi": "प्याज",
+            "unit": "quintal",
+            "current_week": 2500,
+            "previous_week": 2800,
+            "msp": null
+        },
+        "Sugarcane": {
+            "name_hi": "गन्ना",
+            "unit": "quintal",
+            "current_week": 315,
+            "previous_week": 310,
+            "msp": 315
+        },
+        "Jowar": {
+            "name_hi": "ज्वार",
+            "unit": "quintal",
+            "current_week": 3180,
+            "previous_week": 3150,
+            "msp": 3180
+        }
+    }
+}
