@@ -1,7 +1,3 @@
-"""
-Market Price Advisory Service - Provides weekly crop price trends
-and comparisons with MSP (Minimum Support Price).
-"""
 import json
 import os
 from datetime import datetime
@@ -9,20 +5,11 @@ from typing import Optional, List
 
 
 class MarketService:
-    """
-    Service for market price advisories.
-    
-    Uses simulated Agmarknet-style data to provide:
-    - Current week prices
-    - Week-over-week price changes
-    - MSP (Minimum Support Price) comparisons
-    """
     
     def __init__(self):
         self.price_data = self._load_price_data()
     
     def _load_price_data(self) -> dict:
-        """Load market price data from JSON file."""
         data_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "data",
@@ -35,7 +22,6 @@ class MarketService:
             return {"prices": {}}
     
     def get_all_prices(self) -> dict:
-        """Get all crop prices with trends."""
         prices = self.price_data.get("prices", {})
         result = []
         
@@ -44,11 +30,9 @@ class MarketService:
             previous = data.get("previous_week", 0)
             msp = data.get("msp")
             
-            # Calculate week-over-week change
             change = current - previous
             change_pct = (change / previous * 100) if previous > 0 else 0
             
-            # Determine trend
             if change > 0:
                 trend = "up"
             elif change < 0:
@@ -76,21 +60,7 @@ class MarketService:
             "prices": result
         }
     
-    def get_price_advisory(
-        self,
-        crops: Optional[List[str]] = None,
-        lang: str = "en"
-    ) -> dict:
-        """
-        Generate weekly market price advisory.
-        
-        Args:
-            crops: List of crop names to include. If None, includes top movers.
-            lang: Language preference ('en' or 'hi')
-            
-        Returns:
-            dict with price trends and advisory message
-        """
+    def get_price_advisory(self, crops: Optional[List[str]] = None, lang: str = "en") -> dict:
         all_prices = self.get_all_prices()
         
         if not all_prices.get("success"):
@@ -101,7 +71,6 @@ class MarketService:
         
         price_list = all_prices.get("prices", [])
         
-        # Filter by requested crops if specified
         if crops:
             crops_lower = [c.lower() for c in crops]
             price_list = [
@@ -109,12 +78,10 @@ class MarketService:
                 if p["crop"].lower() in crops_lower
             ]
         
-        # Identify top gainers and losers
         sorted_by_change = sorted(price_list, key=lambda x: x["change_percent"], reverse=True)
         top_gainers = [p for p in sorted_by_change if p["change_percent"] > 0][:3]
         top_losers = [p for p in sorted_by_change if p["change_percent"] < 0][-3:]
         
-        # Generate advisory message
         message = self._generate_message(
             prices=price_list,
             gainers=top_gainers,
@@ -132,15 +99,7 @@ class MarketService:
             "message": message
         }
     
-    def _generate_message(
-        self,
-        prices: list,
-        gainers: list,
-        losers: list,
-        lang: str
-    ) -> str:
-        """Generate farmer-friendly market advisory message."""
-        
+    def _generate_message(self, prices: list, gainers: list, losers: list, lang: str) -> str:
         if lang == "hi":
             message = "📊 साप्ताहिक बाजार भाव सलाह\n\n"
             
@@ -154,7 +113,6 @@ class MarketService:
                 for l in losers:
                     message += f"  • {l['crop_hi']}: ₹{l['current_price']}/{l['unit']} ({l['change_percent']}%)\n"
             
-            # MSP advice
             below_msp = [p for p in prices if p.get("above_msp") is False]
             if below_msp:
                 message += "\n⚠️ MSP से नीचे: "
@@ -176,7 +134,6 @@ class MarketService:
                 for l in losers:
                     message += f"  • {l['crop']}: ₹{l['current_price']}/{l['unit']} ({l['change_percent']}%)\n"
             
-            # MSP advice
             below_msp = [p for p in prices if p.get("above_msp") is False]
             if below_msp:
                 message += "\n⚠️ Below MSP: "

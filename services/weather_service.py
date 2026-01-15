@@ -1,6 +1,3 @@
-"""
-Weather Service - Fetches live weather data from OpenWeather API.
-"""
 import json
 import os
 import requests
@@ -9,7 +6,6 @@ from config import Config
 
 
 class WeatherService:
-    """Service for fetching weather data from OpenWeather API."""
     
     def __init__(self):
         self.api_key = Config.OPENWEATHER_API_KEY
@@ -17,7 +13,6 @@ class WeatherService:
         self.pincode_mapping = self._load_pincode_mapping()
     
     def _load_pincode_mapping(self) -> dict:
-        """Load pincode to city mapping from JSON file."""
         mapping_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "data",
@@ -30,29 +25,14 @@ class WeatherService:
             return {}
     
     def _resolve_location(self, location: str) -> str:
-        """
-        Resolve location input to a city name.
-        Accepts either a city name or a pincode.
-        """
-        # Check if it's a pincode (6 digits)
         if location.isdigit() and len(location) == 6:
             city = self.pincode_mapping.get(location)
             if city:
                 return city
-            # If pincode not found, try using it directly
             return location
         return location
     
     def get_weather(self, location: str) -> dict:
-        """
-        Fetch weather data for a given city or pincode.
-        
-        Args:
-            location: City name or 6-digit Indian pincode
-            
-        Returns:
-            dict with weather data or error information
-        """
         if not self.api_key:
             return {
                 "success": False,
@@ -63,9 +43,9 @@ class WeatherService:
         
         try:
             params = {
-                "q": f"{city},IN",  # Restrict to India
+                "q": f"{city},IN",
                 "appid": self.api_key,
-                "units": "metric"  # Celsius
+                "units": "metric"
             }
             
             response = requests.get(self.base_url, params=params, timeout=10)
@@ -101,11 +81,8 @@ class WeatherService:
             }
     
     def _parse_weather_response(self, data: dict, original_location: str) -> dict:
-        """Parse OpenWeather API response into our format."""
-        # Extract rainfall (may not be present)
         rainfall = 0.0
         if "rain" in data:
-            # rain.1h = rainfall in last 1 hour (mm)
             rainfall = data["rain"].get("1h", data["rain"].get("3h", 0.0))
         
         return {
@@ -117,5 +94,5 @@ class WeatherService:
             "humidity": data["main"]["humidity"],
             "rainfall": round(rainfall, 1),
             "description": data["weather"][0]["description"] if data.get("weather") else "Unknown",
-            "wind_speed": round(data.get("wind", {}).get("speed", 0) * 3.6, 1),  # m/s to km/h
+            "wind_speed": round(data.get("wind", {}).get("speed", 0) * 3.6, 1),
         }

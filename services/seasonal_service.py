@@ -1,7 +1,3 @@
-"""
-Seasonal Crop Recommendation Service - Determines current agricultural season
-and recommends suitable crops based on India's cropping calendar.
-"""
 import json
 import os
 from datetime import datetime
@@ -9,20 +5,11 @@ from typing import Optional
 
 
 class SeasonalService:
-    """
-    Service for seasonal crop recommendations.
-    
-    India has three main cropping seasons:
-    - Kharif (Monsoon): June - October, sown with monsoon rains
-    - Rabi (Winter): November - March, sown after monsoon
-    - Zaid (Summer): April - May, short summer crops
-    """
     
     def __init__(self):
         self.crop_data = self._load_crop_data()
     
     def _load_crop_data(self) -> dict:
-        """Load seasonal crop data from JSON file."""
         data_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "data",
@@ -35,41 +22,21 @@ class SeasonalService:
             return {}
     
     def get_current_season(self, month: Optional[int] = None) -> str:
-        """
-        Determine the current agricultural season based on month.
-        
-        Args:
-            month: Month number (1-12). If None, uses current month.
-            
-        Returns:
-            Season key: 'kharif', 'rabi', or 'zaid'
-        """
+
         if month is None:
             month = datetime.now().month
         
-        # Map months to seasons
         for season_key, season_data in self.crop_data.items():
             if month in season_data.get("months", []):
                 return season_key
         
-        # Default to rabi if no match (shouldn't happen)
         return "rabi"
     
     def get_seasonal_advisory(self, month: Optional[int] = None, lang: str = "en") -> dict:
-        """
-        Generate seasonal crop recommendation advisory.
-        
-        Args:
-            month: Month number (1-12). If None, uses current month.
-            lang: Language preference ('en' or 'hi')
-            
-        Returns:
-            dict with season info and crop recommendations
-        """
+
         if month is None:
             month = datetime.now().month
         
-        # Validate month
         if not 1 <= month <= 12:
             return {
                 "success": False,
@@ -85,10 +52,8 @@ class SeasonalService:
                 "error": "Seasonal data not available."
             }
         
-        # Get season name based on language
         season_name = season_data.get("name_hi" if lang == "hi" else "name", season_key)
         
-        # Build crop list
         crops = season_data.get("crops", [])
         crop_list = []
         for crop in crops:
@@ -97,7 +62,6 @@ class SeasonalService:
                 "water_requirement": crop.get("water_requirement")
             })
         
-        # Generate advisory message
         message = self._generate_message(
             season_name=season_name,
             season_key=season_key,
@@ -118,18 +82,7 @@ class SeasonalService:
             "message": message
         }
     
-    def _generate_message(
-        self,
-        season_name: str,
-        season_key: str,
-        planting: str,
-        harvesting: str,
-        crops: list,
-        lang: str
-    ) -> str:
-        """Generate farmer-friendly advisory message."""
-        
-        # Get top 5 crop names
+    def _generate_message(self, season_name: str, season_key: str, planting: str, harvesting: str, crops: list, lang: str) -> str:
         crop_names = [c.get("name_hi" if lang == "hi" else "name") for c in crops[:5]]
         crop_str = ", ".join(crop_names)
         

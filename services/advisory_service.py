@@ -1,13 +1,8 @@
-"""
-Advisory Service - Generates weather-based agricultural advisories.
-"""
 from config import Config
 
 
 class AdvisoryService:
-    """Service for generating rule-based agricultural advisories."""
     
-    # Advisory messages in English and Hindi
     ADVISORIES = {
         "no_irrigation": {
             "en": "Do not irrigate today. Rainfall is expected or has occurred. Save water and let nature do the work!",
@@ -28,15 +23,6 @@ class AdvisoryService:
         self.high_temp_threshold = Config.HIGH_TEMP_THRESHOLD_C
     
     def generate_advisory(self, weather_data: dict) -> dict:
-        """
-        Generate agricultural advisory based on weather conditions.
-        
-        Args:
-            weather_data: Weather data dict from WeatherService
-            
-        Returns:
-            dict with advisory type and messages
-        """
         if not weather_data.get("success"):
             return {
                 "success": False,
@@ -47,10 +33,8 @@ class AdvisoryService:
         rainfall = weather_data.get("rainfall", 0)
         humidity = weather_data.get("humidity", 0)
         
-        # Determine advisory type based on rules
         advisory_type = self._determine_advisory_type(temperature, rainfall)
         
-        # Generate personalized message
         message = self._generate_personalized_message(
             advisory_type=advisory_type,
             city=weather_data.get("city", "your area"),
@@ -74,14 +58,6 @@ class AdvisoryService:
         }
     
     def _determine_advisory_type(self, temperature: float, rainfall: float) -> str:
-        """
-        Apply rule-based logic to determine advisory type.
-        
-        Rules (in priority order):
-        1. If rainfall > threshold → no irrigation needed
-        2. If temperature > 38°C → early irrigation advised
-        3. Otherwise → normal irrigation
-        """
         if rainfall > self.rainfall_threshold:
             return "no_irrigation"
         elif temperature > self.high_temp_threshold:
@@ -89,19 +65,9 @@ class AdvisoryService:
         else:
             return "normal"
     
-    def _generate_personalized_message(
-        self,
-        advisory_type: str,
-        city: str,
-        temperature: float,
-        rainfall: float,
-        humidity: float
-    ) -> dict:
-        """Generate personalized advisory messages with weather details."""
-        
+    def _generate_personalized_message(self, advisory_type: str, city: str, temperature: float, rainfall: float, humidity: float) -> dict:
         base_advisory = self.ADVISORIES.get(advisory_type, self.ADVISORIES["normal"])
         
-        # Create detailed personalized messages
         if advisory_type == "no_irrigation":
             message_en = (
                 f"🌧️ Rain Alert for {city}!\n"

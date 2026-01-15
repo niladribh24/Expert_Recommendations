@@ -1,24 +1,10 @@
-"""
-Agriculture Expert Recommendation System - Flask Backend
-
-A weather-based advisory system for Indian farmers that provides:
-- Weather-based irrigation advisories
-- Seasonal crop recommendations (Kharif, Rabi, Zaid)
-- Weekly market price alerts
-- Simulated SMS delivery
-
-All advisories are generated using rule-based logic.
-"""
 from flask import Flask, request, jsonify
 from services import WeatherService, AdvisoryService, SMSService, SeasonalService, MarketService
 from config import Config
 
-
-# Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialize all services
 weather_service = WeatherService()
 advisory_service = AdvisoryService()
 sms_service = SMSService()
@@ -26,13 +12,8 @@ seasonal_service = SeasonalService()
 market_service = MarketService()
 
 
-# ============================================
-# Health Check Endpoint
-# ============================================
-
 @app.route("/api/health", methods=["GET"])
 def health_check():
-    """Health check endpoint to verify the API is running."""
     return jsonify({
         "status": "healthy",
         "service": "Agriculture Expert Recommendation System",
@@ -47,29 +28,12 @@ def health_check():
     })
 
 
-# ============================================
-# Weather Advisory Endpoint
-# ============================================
-
 @app.route("/weather-advisory", methods=["GET"])
 def weather_advisory():
-    """
-    Get weather-based irrigation advisory.
-    
-    Query Parameters:
-        location: City name or 6-digit Indian pincode (required)
-        lang: Language preference ('en' or 'hi'), default: 'en'
-        send_sms: Phone number to send SMS (optional)
-        
-    Example:
-        GET /weather-advisory?location=Nagpur&lang=hi
-        GET /weather-advisory?location=440001&send_sms=9876543210
-    """
     location = request.args.get("location", "").strip()
     language = request.args.get("lang", "en").lower()
     send_sms_to = request.args.get("send_sms", "").strip()
     
-    # Validate location
     if not location:
         return jsonify({
             "success": False,
@@ -79,16 +43,13 @@ def weather_advisory():
     if language not in ["en", "hi"]:
         language = "en"
     
-    # Get weather data
     weather_data = weather_service.get_weather(location)
     
     if not weather_data.get("success"):
         return jsonify(weather_data), 400
     
-    # Generate advisory using rule-based logic
     advisory = advisory_service.generate_advisory(weather_data)
     
-    # Build response
     response = {
         "success": True,
         "location": location,
@@ -109,7 +70,6 @@ def weather_advisory():
         }
     }
     
-    # If SMS requested, send it via dummy gateway
     if send_sms_to:
         message = advisory.get(f"message_{language}")
         sms_result = sms_service.send_sms(send_sms_to, message, language)
@@ -118,32 +78,12 @@ def weather_advisory():
     return jsonify(response)
 
 
-# ============================================
-# Seasonal Crop Advisory Endpoint
-# ============================================
-
 @app.route("/seasonal-advisory", methods=["GET"])
 def seasonal_advisory():
-    """
-    Get seasonal crop recommendation advisory.
-    
-    Determines current agricultural season (Kharif/Rabi/Zaid) and
-    recommends suitable crops for planting.
-    
-    Query Parameters:
-        month: Month number 1-12 (optional, defaults to current month)
-        lang: Language preference ('en' or 'hi'), default: 'en'
-        send_sms: Phone number to send SMS (optional)
-        
-    Example:
-        GET /seasonal-advisory
-        GET /seasonal-advisory?month=7&lang=hi
-    """
     month_str = request.args.get("month", "").strip()
     language = request.args.get("lang", "en").lower()
     send_sms_to = request.args.get("send_sms", "").strip()
     
-    # Parse month if provided
     month = None
     if month_str:
         try:
@@ -162,7 +102,6 @@ def seasonal_advisory():
     if language not in ["en", "hi"]:
         language = "en"
     
-    # Get seasonal advisory
     advisory = seasonal_service.get_seasonal_advisory(month=month, lang=language)
     
     if not advisory.get("success"):
@@ -180,7 +119,6 @@ def seasonal_advisory():
         "language": language
     }
     
-    # If SMS requested, send it via dummy gateway
     if send_sms_to:
         sms_result = sms_service.send_sms(send_sms_to, advisory.get("message"), language)
         response["sms_status"] = sms_result
@@ -188,32 +126,12 @@ def seasonal_advisory():
     return jsonify(response)
 
 
-# ============================================
-# Market Price Advisory Endpoint
-# ============================================
-
 @app.route("/price-advisory", methods=["GET"])
 def price_advisory():
-    """
-    Get weekly market price advisory.
-    
-    Compares current vs previous week prices and provides trend analysis.
-    Includes MSP (Minimum Support Price) comparisons.
-    
-    Query Parameters:
-        crops: Comma-separated crop names to filter (optional)
-        lang: Language preference ('en' or 'hi'), default: 'en'
-        send_sms: Phone number to send SMS (optional)
-        
-    Example:
-        GET /price-advisory
-        GET /price-advisory?crops=Rice,Wheat&lang=hi
-    """
     crops_str = request.args.get("crops", "").strip()
     language = request.args.get("lang", "en").lower()
     send_sms_to = request.args.get("send_sms", "").strip()
     
-    # Parse crops list if provided
     crops = None
     if crops_str:
         crops = [c.strip() for c in crops_str.split(",") if c.strip()]
@@ -221,7 +139,6 @@ def price_advisory():
     if language not in ["en", "hi"]:
         language = "en"
     
-    # Get market advisory
     advisory = market_service.get_price_advisory(crops=crops, lang=language)
     
     if not advisory.get("success"):
@@ -238,7 +155,6 @@ def price_advisory():
         "language": language
     }
     
-    # If SMS requested, send it via dummy gateway
     if send_sms_to:
         sms_result = sms_service.send_sms(send_sms_to, advisory.get("message"), language)
         response["sms_status"] = sms_result
@@ -246,45 +162,13 @@ def price_advisory():
     return jsonify(response)
 
 
-# ============================================
-# Dummy SMS Gateway Endpoint
-# ============================================
-
 @app.route("/send-sms", methods=["POST"])
 def send_sms():
-    """
-    Dummy SMS gateway endpoint.
-    
-    Simulates sending SMS messages. Does NOT send real SMS.
-    All messages are logged and stored in memory for demonstration.
-    
-    Request Body (JSON):
-        phone: Recipient phone number (Indian format: +91XXXXXXXXXX or 10 digits)
-        message: Message content to send
-        
-    Example:
-        POST /send-sms
-        Content-Type: application/json
-        
-        {
-            "phone": "+919876543210",
-            "message": "Your advisory message here"
-        }
-        
-    Response:
-        {
-            "status": "SENT",
-            "delivery": "SIMULATED",
-            "message_id": "uuid",
-            "timestamp": "ISO format"
-        }
-    """
     data = request.get_json() or {}
     
     phone = data.get("phone", "").strip()
     message = data.get("message", "").strip()
     
-    # Validate required fields
     if not phone:
         return jsonify({
             "success": False,
@@ -297,7 +181,6 @@ def send_sms():
             "error": "Missing required field: message"
         }), 400
     
-    # Send via dummy SMS service
     result = sms_service.send_sms(phone, message)
     
     if result.get("success"):
@@ -316,13 +199,8 @@ def send_sms():
         }), 400
 
 
-# ============================================
-# SMS History Endpoints (for demonstration)
-# ============================================
-
 @app.route("/api/sms/history", methods=["GET"])
 def get_sms_history():
-    """Get history of sent SMS messages (for demonstration)."""
     limit = request.args.get("limit", 50, type=int)
     phone = request.args.get("phone", "").strip()
     
@@ -338,13 +216,8 @@ def get_sms_history():
     })
 
 
-# ============================================
-# Legacy Endpoints (backward compatibility)
-# ============================================
-
 @app.route("/api/weather", methods=["GET"])
 def get_weather():
-    """Get current weather for a location (legacy endpoint)."""
     location = request.args.get("location", "").strip()
     
     if not location:
@@ -359,13 +232,8 @@ def get_weather():
 
 @app.route("/api/advisory", methods=["GET"])
 def get_advisory():
-    """Get weather advisory (legacy endpoint - redirects to /weather-advisory)."""
     return weather_advisory()
 
-
-# ============================================
-# Error Handlers
-# ============================================
 
 @app.errorhandler(404)
 def not_found(error):
@@ -388,10 +256,6 @@ def internal_error(error):
         "error": "Internal server error. Please try again later."
     }), 500
 
-
-# ============================================
-# Run Application
-# ============================================
 
 if __name__ == "__main__":
     print("\n" + "="*60)
